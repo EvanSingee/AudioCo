@@ -1,0 +1,42 @@
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Data directories (large audio files)
+data/D0_raw/
+data/D1_segmented/
+data/D2_clustered/
+data/D3_structured/
+data/clean_reference/
+
+# Logs
+logs/
+
+# Downloaded models
+models/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Streamlit
+.streamlit/
+
+# Environment files
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
