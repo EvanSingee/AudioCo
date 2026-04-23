@@ -1,0 +1,716 @@
+{
+  "total_pairs": 70,
+  "split_counts": {
+    "train": 70,
+    "val": 0,
+    "test": 0
+  },
+  "speakers": [
+    "speaker_01",
+    "speaker_03",
+    "speaker_04",
+    "speaker_06"
+  ],
+  "samples": [
+    {
+      "id": 0,
+      "split": "train",
+      "filename": "000000.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_52.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_401.wav",
+      "mix_snr_db": 3.06
+    },
+    {
+      "id": 1,
+      "split": "train",
+      "filename": "000001.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_105.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "mix_snr_db": 1.98
+    },
+    {
+      "id": 2,
+      "split": "train",
+      "filename": "000002.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_124.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_206.wav",
+      "mix_snr_db": -1.6
+    },
+    {
+      "id": 3,
+      "split": "train",
+      "filename": "000003.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_124.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_39.wav",
+      "mix_snr_db": -3.45
+    },
+    {
+      "id": 4,
+      "split": "train",
+      "filename": "000004.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_605.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_714.wav",
+      "mix_snr_db": 4.57
+    },
+    {
+      "id": 5,
+      "split": "train",
+      "filename": "000005.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_52.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "mix_snr_db": -1.63
+    },
+    {
+      "id": 6,
+      "split": "train",
+      "filename": "000006.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_666.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_401.wav",
+      "mix_snr_db": -4.07
+    },
+    {
+      "id": 7,
+      "split": "train",
+      "filename": "000007.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_105.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "mix_snr_db": -4.03
+    },
+    {
+      "id": 8,
+      "split": "train",
+      "filename": "000008.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_423.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_811.wav",
+      "mix_snr_db": 3.47
+    },
+    {
+      "id": 9,
+      "split": "train",
+      "filename": "000009.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_03",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_105.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_206.wav",
+      "mix_snr_db": 1.04
+    },
+    {
+      "id": 10,
+      "split": "train",
+      "filename": "000010.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_666.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_623.wav",
+      "mix_snr_db": -1.3
+    },
+    {
+      "id": 11,
+      "split": "train",
+      "filename": "000011.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_605.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_211.wav",
+      "mix_snr_db": -2.9
+    },
+    {
+      "id": 12,
+      "split": "train",
+      "filename": "000012.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_461.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "mix_snr_db": -2.33
+    },
+    {
+      "id": 13,
+      "split": "train",
+      "filename": "000013.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_839.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_534.wav",
+      "mix_snr_db": 4.37
+    },
+    {
+      "id": 14,
+      "split": "train",
+      "filename": "000014.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_243.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_214.wav",
+      "mix_snr_db": 1.48
+    },
+    {
+      "id": 15,
+      "split": "train",
+      "filename": "000015.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_461.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "mix_snr_db": 1.09
+    },
+    {
+      "id": 16,
+      "split": "train",
+      "filename": "000016.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_666.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_249.wav",
+      "mix_snr_db": -3.29
+    },
+    {
+      "id": 17,
+      "split": "train",
+      "filename": "000017.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_52.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_481.wav",
+      "mix_snr_db": 2.29
+    },
+    {
+      "id": 18,
+      "split": "train",
+      "filename": "000018.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_666.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_411.wav",
+      "mix_snr_db": -3.37
+    },
+    {
+      "id": 19,
+      "split": "train",
+      "filename": "000019.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_461.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_664.wav",
+      "mix_snr_db": -1.21
+    },
+    {
+      "id": 20,
+      "split": "train",
+      "filename": "000020.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_839.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_391.wav",
+      "mix_snr_db": 0.61
+    },
+    {
+      "id": 21,
+      "split": "train",
+      "filename": "000021.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_52.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_974.wav",
+      "mix_snr_db": -2.37
+    },
+    {
+      "id": 22,
+      "split": "train",
+      "filename": "000022.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_461.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_906.wav",
+      "mix_snr_db": 0.85
+    },
+    {
+      "id": 23,
+      "split": "train",
+      "filename": "000023.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_52.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_54.wav",
+      "mix_snr_db": 3.98
+    },
+    {
+      "id": 24,
+      "split": "train",
+      "filename": "000024.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_666.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_263.wav",
+      "mix_snr_db": -1.01
+    },
+    {
+      "id": 25,
+      "split": "train",
+      "filename": "000025.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_605.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_606.wav",
+      "mix_snr_db": -2.81
+    },
+    {
+      "id": 26,
+      "split": "train",
+      "filename": "000026.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_124.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_928.wav",
+      "mix_snr_db": 4.98
+    },
+    {
+      "id": 27,
+      "split": "train",
+      "filename": "000027.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_105.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_683.wav",
+      "mix_snr_db": 0.1
+    },
+    {
+      "id": 28,
+      "split": "train",
+      "filename": "000028.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_243.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_443.wav",
+      "mix_snr_db": -4.09
+    },
+    {
+      "id": 29,
+      "split": "train",
+      "filename": "000029.wav",
+      "speaker_1": "speaker_01",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_01/chunk_0000_00_124.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_43.wav",
+      "mix_snr_db": -4.53
+    },
+    {
+      "id": 30,
+      "split": "train",
+      "filename": "000030.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_39.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_116.wav",
+      "mix_snr_db": 3.76
+    },
+    {
+      "id": 31,
+      "split": "train",
+      "filename": "000031.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_714.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_710.wav",
+      "mix_snr_db": -2.37
+    },
+    {
+      "id": 32,
+      "split": "train",
+      "filename": "000032.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_759.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_592.wav",
+      "mix_snr_db": 0.01
+    },
+    {
+      "id": 33,
+      "split": "train",
+      "filename": "000033.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_506.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_983.wav",
+      "mix_snr_db": -3.21
+    },
+    {
+      "id": 34,
+      "split": "train",
+      "filename": "000034.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_206.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_481.wav",
+      "mix_snr_db": 4.13
+    },
+    {
+      "id": 35,
+      "split": "train",
+      "filename": "000035.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_409.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_411.wav",
+      "mix_snr_db": 3.71
+    },
+    {
+      "id": 36,
+      "split": "train",
+      "filename": "000036.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_841.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_270.wav",
+      "mix_snr_db": -2.02
+    },
+    {
+      "id": 37,
+      "split": "train",
+      "filename": "000037.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_807.wav",
+      "mix_snr_db": 1.39
+    },
+    {
+      "id": 38,
+      "split": "train",
+      "filename": "000038.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_841.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_815.wav",
+      "mix_snr_db": 1.09
+    },
+    {
+      "id": 39,
+      "split": "train",
+      "filename": "000039.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_04",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_811.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0002_00_242.wav",
+      "mix_snr_db": -3.47
+    },
+    {
+      "id": 40,
+      "split": "train",
+      "filename": "000040.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_759.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_50.wav",
+      "mix_snr_db": -0.25
+    },
+    {
+      "id": 41,
+      "split": "train",
+      "filename": "000041.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_239.wav",
+      "mix_snr_db": 0.5
+    },
+    {
+      "id": 42,
+      "split": "train",
+      "filename": "000042.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_759.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_906.wav",
+      "mix_snr_db": -2.35
+    },
+    {
+      "id": 43,
+      "split": "train",
+      "filename": "000043.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_635.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_974.wav",
+      "mix_snr_db": 3.72
+    },
+    {
+      "id": 44,
+      "split": "train",
+      "filename": "000044.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_206.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_239.wav",
+      "mix_snr_db": -0.77
+    },
+    {
+      "id": 45,
+      "split": "train",
+      "filename": "000045.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_409.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_911.wav",
+      "mix_snr_db": -2.88
+    },
+    {
+      "id": 46,
+      "split": "train",
+      "filename": "000046.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_206.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_239.wav",
+      "mix_snr_db": 0.39
+    },
+    {
+      "id": 47,
+      "split": "train",
+      "filename": "000047.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_841.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_525.wav",
+      "mix_snr_db": 2.3
+    },
+    {
+      "id": 48,
+      "split": "train",
+      "filename": "000048.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_811.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_525.wav",
+      "mix_snr_db": -2.99
+    },
+    {
+      "id": 49,
+      "split": "train",
+      "filename": "000049.wav",
+      "speaker_1": "speaker_03",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_03/chunk_0000_00_811.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_28.wav",
+      "mix_snr_db": -1.88
+    },
+    {
+      "id": 50,
+      "split": "train",
+      "filename": "000050.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0002_00_952.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_928.wav",
+      "mix_snr_db": -0.78
+    },
+    {
+      "id": 51,
+      "split": "train",
+      "filename": "000051.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_483.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_994.wav",
+      "mix_snr_db": -2.21
+    },
+    {
+      "id": 52,
+      "split": "train",
+      "filename": "000052.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_807.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_683.wav",
+      "mix_snr_db": -2.5
+    },
+    {
+      "id": 53,
+      "split": "train",
+      "filename": "000053.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_927.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_612.wav",
+      "mix_snr_db": 4.23
+    },
+    {
+      "id": 54,
+      "split": "train",
+      "filename": "000054.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_270.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_760.wav",
+      "mix_snr_db": -0.57
+    },
+    {
+      "id": 55,
+      "split": "train",
+      "filename": "000055.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_381.wav",
+      "mix_snr_db": 3.61
+    },
+    {
+      "id": 56,
+      "split": "train",
+      "filename": "000056.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_584.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_27.wav",
+      "mix_snr_db": 0.5
+    },
+    {
+      "id": 57,
+      "split": "train",
+      "filename": "000057.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_160.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_632.wav",
+      "mix_snr_db": -4.49
+    },
+    {
+      "id": 58,
+      "split": "train",
+      "filename": "000058.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_611.wav",
+      "mix_snr_db": 4.99
+    },
+    {
+      "id": 59,
+      "split": "train",
+      "filename": "000059.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_357.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_683.wav",
+      "mix_snr_db": 3.36
+    },
+    {
+      "id": 60,
+      "split": "train",
+      "filename": "000060.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_214.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_488.wav",
+      "mix_snr_db": 4.69
+    },
+    {
+      "id": 61,
+      "split": "train",
+      "filename": "000061.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_411.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_275.wav",
+      "mix_snr_db": 4.26
+    },
+    {
+      "id": 62,
+      "split": "train",
+      "filename": "000062.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_993.wav",
+      "mix_snr_db": 3.49
+    },
+    {
+      "id": 63,
+      "split": "train",
+      "filename": "000063.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0002_00.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_27.wav",
+      "mix_snr_db": -3.34
+    },
+    {
+      "id": 64,
+      "split": "train",
+      "filename": "000064.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_849.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_611.wav",
+      "mix_snr_db": -0.14
+    },
+    {
+      "id": 65,
+      "split": "train",
+      "filename": "000065.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_214.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_54.wav",
+      "mix_snr_db": -2.86
+    },
+    {
+      "id": 66,
+      "split": "train",
+      "filename": "000066.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_408.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0001_00_906.wav",
+      "mix_snr_db": -0.99
+    },
+    {
+      "id": 67,
+      "split": "train",
+      "filename": "000067.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0001_00_592.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_43.wav",
+      "mix_snr_db": -4.41
+    },
+    {
+      "id": 68,
+      "split": "train",
+      "filename": "000068.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_357.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_381.wav",
+      "mix_snr_db": -1.21
+    },
+    {
+      "id": 69,
+      "split": "train",
+      "filename": "000069.wav",
+      "speaker_1": "speaker_04",
+      "speaker_2": "speaker_06",
+      "s1_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_04/chunk_0000_00_270.wav",
+      "s2_src": "/Users/ksrikailashchoudhary/Documents/Clg stuff/4Sem/PS/AudioCo/data/D2_clustered/speaker_06/chunk_0000_00_632.wav",
+      "mix_snr_db": 4.85
+    }
+  ]
+}
