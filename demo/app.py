@@ -554,10 +554,30 @@ elif page == "🎧 Audio Comparison":
 # ═══════════════════════════════════════════════════════════════════════════════
 
 elif page == "⚙️ Run Pipeline":
+
     st.markdown('<div class="hero-title">Agent Control Panel</div>', unsafe_allow_html=True)
     st.markdown('<div class="hero-sub">Trigger individual agents or the full pipeline from the UI</div>', unsafe_allow_html=True)
 
-    st.warning("⚠️ Make sure your raw audio files are placed in `data/D0_raw/` before running Agent 1.")
+    st.warning("⚠️ You can use a Google Drive .zip link as your dataset. It will be extracted to `data/D0_drive/` and used as input for Agent 1.")
+
+    import importlib
+    import shutil
+    drive_url = st.text_input("Google Drive .zip link (direct download)", "")
+    use_drive = st.checkbox("Use Google Drive dataset as input", value=False)
+    drive_data_dir = os.path.join(config.DATA_DIR, "D0_drive")
+    if use_drive and drive_url:
+        if st.button("⬇️ Download & Extract Drive Dataset"):
+            with st.spinner("Downloading and extracting dataset..."):
+                try:
+                    from utils_drive import download_and_extract_drive_folder
+                    # Clean previous
+                    if os.path.exists(drive_data_dir):
+                        shutil.rmtree(drive_data_dir)
+                    os.makedirs(drive_data_dir, exist_ok=True)
+                    download_and_extract_drive_folder(drive_url, drive_data_dir)
+                    st.success(f"Dataset extracted to {drive_data_dir}")
+                except Exception as e:
+                    st.error(f"Download/extract failed: {e}")
 
     agents = [
         ("Agent 1", "VAD Segmentation",   "Strips silence & splits recordings into speech chunks.", "agents.agent1_vad"),
@@ -574,10 +594,12 @@ elif page == "⚙️ Run Pipeline":
                 st.caption(a_desc)
                 if st.button(f"▶ Run {a_id}", key=f"run_{i}"):
                     with st.spinner(f"Running {a_name}..."):
-                        import importlib
                         try:
                             mod = importlib.import_module(a_mod)
-                            mod.run()
+                            if a_id == "Agent 1" and use_drive and os.path.exists(drive_data_dir):
+                                mod.run(src_dir=drive_data_dir)
+                            else:
+                                mod.run()
                             st.success(f"✅ {a_name} complete!")
                         except Exception as e:
                             st.error(f"❌ {a_name} failed: {e}")
@@ -587,10 +609,12 @@ elif page == "⚙️ Run Pipeline":
             progress = st.progress(0)
             for i, (a_id, a_name, a_desc, a_mod) in enumerate(agents):
                 with st.spinner(f"Running {a_name}..."):
-                    import importlib
                     try:
                         mod = importlib.import_module(a_mod)
-                        mod.run()
+                        if i == 0 and use_drive and os.path.exists(drive_data_dir):
+                            mod.run(src_dir=drive_data_dir)
+                        else:
+                            mod.run()
                         progress.progress((i + 1) / len(agents))
                         st.success(f"✅ {a_name}")
                     except Exception as e:

@@ -9,21 +9,21 @@ import soundfile as sf
 import librosa
 import config
 
-# ─── Configure pydub to use bundled ffmpeg (imageio-ffmpeg) ─────────────────
-# Must happen BEFORE pydub is imported so it can locate ffmpeg.
+# ─── Configure pydub/ffmpeg (imageio-ffmpeg bundled binary) ─────────────────
 try:
     import imageio_ffmpeg as _iio
     _ffmpeg_bin = _iio.get_ffmpeg_exe()
     _ffmpeg_dir = os.path.dirname(_ffmpeg_bin)
-    # Prepend ffmpeg dir to PATH so pydub's which() call finds it
+    # Prepend dir to PATH so pydub's which() finds both ffmpeg and ffprobe
     os.environ["PATH"] = _ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
-    # Also create a symlink named 'ffmpeg' in the dir if binary has a longer name
-    _symlink = os.path.join(_ffmpeg_dir, "ffmpeg")
-    if not os.path.exists(_symlink):
-        try:
-            os.symlink(_ffmpeg_bin, _symlink)
-        except OSError:
-            pass
+    # Create 'ffmpeg' symlink (ffmpeg binary may have a versioned name)
+    for _name in ("ffmpeg", "ffprobe"):
+        _sym = os.path.join(_ffmpeg_dir, _name)
+        if not os.path.exists(_sym):
+            try:
+                os.symlink(_ffmpeg_bin, _sym)
+            except OSError:
+                pass
 except Exception:
     _ffmpeg_bin = "ffmpeg"
 
@@ -34,6 +34,7 @@ with warnings.catch_warnings():
     try:
         AudioSegment.converter = _ffmpeg_bin
         AudioSegment.ffmpeg    = _ffmpeg_bin
+        AudioSegment.ffprobe   = _ffmpeg_bin   # ffmpeg can substitute ffprobe
     except Exception:
         pass
 
@@ -51,19 +52,32 @@ SUPPORTED_FORMATS = {".wav", ".mp4", ".m4a", ".mpeg", ".mp3", ".flac", ".ogg"}
 def convert_to_wav(src_path: str, dst_path: str) -> str:
     """
     Convert any audio/video file to mono 16-bit 16 kHz WAV.
+    Uses librosa as primary loader (no ffprobe needed for WAV/MP3/FLAC/OGG).
+    Falls back to pydub for container formats (MP4/M4A/MPEG).
     Returns the destination path.
     """
     ext = os.path.splitext(src_path)[1].lower()
     if ext not in SUPPORTED_FORMATS:
         raise ValueError(f"Unsupported format: {ext}")
 
+    os.makedirs(os.path.dirname(dst_path) or ".", exist_ok=True)
+
+    # Primary path: librosa handles WAV/MP3/FLAC/OGG without ffprobe
+    if ext in {".wav", ".mp3", ".flac", ".ogg"}:
+        try:
+            wav, sr = librosa.load(src_path, sr=config.SAMPLE_RATE, mono=True)
+            sf.write(dst_path, wav.astype(np.float32), config.SAMPLE_RATE, subtype="PCM_16")
+            return dst_path
+        except Exception as e:
+            logging.getLogger("utils").warning(f"librosa load failed ({e}), trying pydub...")
+
+    # Fallback: pydub+ffmpeg for container formats (MP4, M4A, MPEG)
     audio = AudioSegment.from_file(src_path)
     audio = (
         audio.set_frame_rate(config.SAMPLE_RATE)
              .set_channels(config.CHANNELS)
              .set_sample_width(config.BIT_DEPTH // 8)
     )
-    os.makedirs(os.path.dirname(dst_path), exist_ok=True)
     audio.export(dst_path, format="wav")
     return dst_path
 
