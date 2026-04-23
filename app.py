@@ -260,31 +260,57 @@ if page == "🏠 Overview":
     st.markdown('<div class="hero-sub">Data-Centric Speech Separation — same model, better data = better results</div>',
                 unsafe_allow_html=True)
 
-    # Pipeline diagram
+    # Drive URL context
+    if "overview_drive_url" not in st.session_state:
+        st.session_state["overview_drive_url"] = ""
+
+    with st.expander("🔗 Your Google Drive Dataset", expanded=True):
+        ov_url = st.text_input(
+            "Google Drive folder URL (paste here to track your dataset)",
+            value=st.session_state.get("overview_drive_url", ""),
+            placeholder="https://drive.google.com/drive/folders/...",
+            key="ov_drive_url",
+        )
+        if ov_url:
+            st.session_state["overview_drive_url"] = ov_url
+            folder_id_match = __import__("re").search(r"/folders/([a-zA-Z0-9_-]+)", ov_url)
+            if folder_id_match:
+                fid = folder_id_match.group(1)
+                st.success(f"✅ Drive folder ID detected: `{fid}`")
+                st.caption("Head to ⚙️ Run Pipeline to download and process this folder.")
+            else:
+                st.warning("Could not parse a folder ID from this URL.")
+        else:
+            st.caption("Paste your Drive link above — the pipeline will download from it.")
+
+    st.markdown('<hr class="soft">', unsafe_allow_html=True)
+
+    # Pipeline diagram — counts from actual disk
     cols = st.columns(4)
     stages = [
-        ("D0", "Raw Input", "mp4 recordings\nfrom Google Drive", "#ff7b72"),
-        ("D1", "Segments",  "VAD speech chunks\n16 kHz mono WAV",  "#e3b341"),
-        ("D2", "Clean",     "Filtered, normalised\nclips",          "#58a6ff"),
-        ("D3", "Structured","(mix, s1, s2)\npairs",                 "#3fb950"),
+        ("D0", "Raw Input",   "mp4/audio files\nfrom Google Drive", "#ff7b72",  config.D0_DIR),
+        ("D1", "Segments",    "VAD speech chunks\n16 kHz mono WAV",  "#e3b341",  config.D1_DIR),
+        ("D2", "Clean",       "Filtered, normalised\nclips",          "#58a6ff",  config.D2_DIR),
+        ("D3", "Structured",  "(mix, s1, s2)\npairs",                 "#3fb950",  config.D3_MIX_DIR),
     ]
-    for col, (tag, title, desc, color) in zip(cols, stages):
+    for col, (tag, title, desc, color, d) in zip(cols, stages):
         with col:
-            n = len(wav_files({
-                "D0": config.D0_DIR,
-                "D1": config.D1_DIR,
-                "D2": config.D2_DIR,
-                "D3": config.D3_MIX_DIR,
-            }[tag]))
+            n = len(wav_files(d))
+            status = "✅" if n > 0 else "⏳"
             st.markdown(f"""
             <div class="card" style="border-left:4px solid {color}; text-align:center">
                 <div style="font-size:1.6rem; font-weight:800; color:{color}">{tag}</div>
                 <div style="font-weight:600; margin:4px 0">{title}</div>
                 <div style="font-size:0.8rem; color:#8b949e; white-space:pre-line">{desc}</div>
-                <div style="margin-top:10px; font-size:1.2rem; font-weight:700; color:{color}">{n}</div>
-                <div style="font-size:0.7rem; color:#8b949e">files</div>
+                <div style="margin-top:10px; font-size:1.8rem; font-weight:800; color:{color}">{n}</div>
+                <div style="font-size:0.7rem; color:#8b949e">WAV files {status}</div>
             </div>
             """, unsafe_allow_html=True)
+
+    col_refresh, _ = st.columns([1, 3])
+    with col_refresh:
+        if st.button("🔄 Refresh counts", help="Re-scan all data directories"):
+            st.rerun()
 
     st.markdown('<hr class="soft">', unsafe_allow_html=True)
 
@@ -330,21 +356,66 @@ elif page == "⚙️ Run Pipeline":
 
     # Per-agent controls
     st.markdown("#### Individual agents")
-    for idx, (label, desc, mod_name, fn_name) in enumerate([
+
+    import pandas as pd
+
+    def _file_detail_table(directory: str, label: str):
+        """Show a table of WAV files with duration and RMS stats."""
+        files = wav_files(directory)
+        if not files:
+            st.info(f"No files in {label} yet.")
+            return
+        rows = []
+        for fp in files[:50]:  # cap at 50 rows
+            try:
+                import soundfile as _sf
+                info = _sf.info(str(fp))
+                dur  = round(info.duration, 2)
+                audio_arr, _ = sf.read(str(fp), dtype="float32")
+                rms_val = round(float(np.sqrt(np.mean(audio_arr**2))), 4)
+            except Exception:
+                dur, rms_val = "?", "?"
+            rows.append({"File": fp.name, "Duration (s)": dur, "RMS": rms_val})
+        df = pd.DataFrame(rows)
+        st.dataframe(df, use_container_width=True, hide_index=True)
+        st.caption(f"Showing {len(rows)} of {len(files)} files in `{directory}`")
+
+    for idx, (label, desc, mod_name, fn_name, out_dir) in enumerate([
         ("Agent 1 – Ingest & Segment",
-         "Download → convert to WAV → VAD split",
-         "agents.agent1_ingest", "run"),
+         "Download → convert to WAV → VAD split into speech chunks",
+         "agents.agent1_ingest", "run", config.D1_DIR),
         ("Agent 2 – Data Cleaning",
-         "Filter short/noisy clips → normalise",
-         "agents.agent2_clean", "run"),
+         "Filter short/noisy clips → normalise amplitude → save to D2_clean",
+         "agents.agent2_clean", "run", config.D2_DIR),
         ("Agent 3 – Dataset Structuring",
-         "Detect/create (mix, s1, s2) pairs",
-         "agents.agent3_structure", "run"),
+         "Build (mix, s1, s2) pairs from clean clips → save to D3/",
+         "agents.agent3_structure", "run", config.D3_MIX_DIR),
     ]):
         with st.expander(f"{'①②③'[idx]}  {label}", expanded=False):
             st.caption(desc)
+
+            # Show current file count
+            cur_files = wav_files(out_dir)
+            st.markdown(
+                f'<div class="card" style="padding:0.6rem 1rem; margin-bottom:0.6rem;">'
+                f'<b>Current output:</b> {len(cur_files)} WAV files in '
+                f'<code>{out_dir.split("/data/")[1] if "/data/" in out_dir else out_dir}</code>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
             prog_ph = st.empty()
-            if st.button(f"▶ Run {label.split('–')[0].strip()}", key=f"btn_agent{idx+1}"):
+            col_run, col_detail = st.columns([1, 1])
+            with col_run:
+                run_clicked = st.button(
+                    f"▶ Run {label.split('–')[0].strip()}",
+                    key=f"btn_agent{idx+1}",
+                    type="primary",
+                )
+            with col_detail:
+                show_files = st.checkbox("Show output files", key=f"show_{idx}")
+
+            if run_clicked:
                 with st.spinner(f"Running {label}…"):
                     try:
                         import importlib
@@ -356,9 +427,46 @@ elif page == "⚙️ Run Pipeline":
                                                progress_placeholder=prog_ph)
                         else:
                             result = run_agent(fn, progress_placeholder=prog_ph)
-                        st.success(f"✅ Done: {result}")
+
+                        # Show result summary
+                        st.success(f"✅ Done!")
+                        r_cols = st.columns(len(result))
+                        for rc, (k, v) in zip(r_cols, result.items()):
+                            with rc:
+                                st.metric(k.replace("_", " ").title(), v)
                     except Exception as e:
                         st.error(f"❌ {e}")
+
+            if show_files:
+                st.markdown("**Output file details:**")
+                _file_detail_table(out_dir, label)
+
+            # D2 specific: offer to upload clean data to a new Drive folder
+            if idx == 1:
+                st.markdown("---")
+                st.markdown("**📤 Upload D2 clean data to a new Google Drive folder**")
+                new_folder_name = st.text_input(
+                    "New Drive folder name",
+                    value="AudioCo_D2_Clean",
+                    key="drive_upload_folder",
+                )
+                if st.button("☁️ Upload Clean Files to Drive", key="upload_d2"):
+                    d2_files = wav_files(config.D2_DIR)
+                    if not d2_files:
+                        st.warning("No files in D2_clean/ to upload.")
+                    else:
+                        try:
+                            import gdown, subprocess, shutil, tempfile
+                            # gdown doesn't support upload; use gdrive CLI if available or show manual instructions
+                            st.info(
+                                f"**{len(d2_files)} files** are ready in `data/D2_clean/`. "
+                                "To upload to Google Drive, either:\n\n"
+                                "1. **Drag & drop** the `data/D2_clean/` folder into Google Drive in your browser, or\n"
+                                "2. Use [rclone](https://rclone.org/) with `rclone copy data/D2_clean/ gdrive:AudioCo_D2_Clean`\n\n"
+                                "Automatic upload via the API requires OAuth credentials — see README."
+                            )
+                        except Exception as e:
+                            st.error(str(e))
 
     st.markdown('<hr class="soft">', unsafe_allow_html=True)
 
@@ -415,25 +523,82 @@ elif page == "⚙️ Run Pipeline":
 # ─────────────────────────────────────────────────────────────────────────────
 elif page == "📊 Evaluation":
     st.markdown('<div class="hero-title">Evaluation</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-sub">SDR improvement across pipeline stages</div>',
+    st.markdown('<div class="hero-sub">Live SDR scores computed from your actual dataset — same model, better data → better results</div>',
                 unsafe_allow_html=True)
 
-    # Load cached or compute fresh
+    import pandas as pd
+
+    # Check if any data exists at all
+    total_d0 = len(wav_files(config.D0_DIR))
+    total_d1 = len(wav_files(config.D1_DIR))
+    total_d2 = len(wav_files(config.D2_DIR))
+    total_d3 = min(len(wav_files(config.D3_MIX_DIR)), len(wav_files(config.D3_S1_DIR)), len(wav_files(config.D3_S2_DIR)))
+
+    dataset_col1, dataset_col2, dataset_col3, dataset_col4 = st.columns(4)
+    for col, lbl, cnt, color in [
+        (dataset_col1, "D0 Raw",        total_d0, "#ff7b72"),
+        (dataset_col2, "D1 Segments",   total_d1, "#e3b341"),
+        (dataset_col3, "D2 Clean",      total_d2, "#58a6ff"),
+        (dataset_col4, "D3 Pairs",      total_d3, "#3fb950"),
+    ]:
+        with col:
+            st.markdown(
+                f'<div class="metric-tile">'
+                f'<div class="metric-label">{lbl}</div>'
+                f'<div class="metric-value" style="color:{color}">{cnt}</div>'
+                f'<div class="metric-unit">files</div>'
+                f'</div>',
+                unsafe_allow_html=True,
+            )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    if total_d3 == 0 and total_d2 == 0:
+        st.warning("⚠️ No processed data found. Please run the pipeline first (⚙️ Run Pipeline page).")
+        st.stop()
+
+    # Auto-compute if data exists but no cached values
     if "sdr_vals" not in st.session_state:
-        if st.button("▶ Compute SDR now", type="primary"):
-            with st.spinner("Loading model & computing SDR…"):
+        data_ready = total_d2 >= 2 or total_d3 >= 1
+        if data_ready:
+            st.info("Data found — computing SDR scores from your dataset…")
+            with st.spinner("Loading model & computing SDR on your actual files…"):
                 load_model()
                 st.session_state["sdr_vals"] = {
-                    "D0 Raw":       compute_sdr_for_dir(config.D0_DIR),
-                    "D1 Segments":  compute_sdr_for_dir(config.D1_DIR),
-                    "D2 Clean":     compute_sdr_for_dir(config.D2_DIR),
-                    "D3 Structured": compute_sdr_d3(),
+                    "D0 Raw":        compute_sdr_for_dir(config.D0_DIR) if total_d0 >= 2 else None,
+                    "D1 Segments":   compute_sdr_for_dir(config.D1_DIR) if total_d1 >= 2 else None,
+                    "D2 Clean":      compute_sdr_for_dir(config.D2_DIR) if total_d2 >= 2 else None,
+                    "D3 Structured": compute_sdr_d3()                   if total_d3 >= 1 else None,
                 }
+            st.success("✅ SDR computed from your actual dataset!")
         else:
-            st.info("Run the pipeline first or click 'Compute SDR now'.")
-            st.stop()
+            if st.button("▶ Compute SDR now", type="primary"):
+                with st.spinner("Loading model & computing SDR…"):
+                    load_model()
+                    st.session_state["sdr_vals"] = {
+                        "D0 Raw":        compute_sdr_for_dir(config.D0_DIR),
+                        "D1 Segments":   compute_sdr_for_dir(config.D1_DIR),
+                        "D2 Clean":      compute_sdr_for_dir(config.D2_DIR),
+                        "D3 Structured": compute_sdr_d3(),
+                    }
+            else:
+                st.stop()
 
     sdr_vals = st.session_state["sdr_vals"]
+
+    st.markdown("### 📈 SDR Results (from your data)")
+    # Recompute button
+    if st.button("🔄 Recompute SDR", help="Re-run evaluation on current dataset"):
+        with st.spinner("Recomputing…"):
+            load_model()
+            st.session_state["sdr_vals"] = {
+                "D0 Raw":        compute_sdr_for_dir(config.D0_DIR) if total_d0 >= 2 else None,
+                "D1 Segments":   compute_sdr_for_dir(config.D1_DIR) if total_d1 >= 2 else None,
+                "D2 Clean":      compute_sdr_for_dir(config.D2_DIR) if total_d2 >= 2 else None,
+                "D3 Structured": compute_sdr_d3()                   if total_d3 >= 1 else None,
+            }
+        sdr_vals = st.session_state["sdr_vals"]
+        st.rerun()
 
     # Metric tiles
     tile_cols = st.columns(4)
@@ -469,28 +634,62 @@ elif page == "📊 Evaluation":
         font=dict(color="#e6edf3", family="Inter"),
         xaxis=dict(gridcolor="#21262d"),
         yaxis=dict(gridcolor="#21262d", title="Mean SDR (dB)"),
-        title=dict(text="SDR by Pipeline Stage", font=dict(size=16)),
+        title=dict(text="SDR by Pipeline Stage — Your Dataset", font=dict(size=16)),
         margin=dict(t=50, b=30),
         height=380,
     )
     st.plotly_chart(fig, use_container_width=True)
 
-    # Table
-    st.markdown("#### Detailed Results")
+    # Summary table
+    st.markdown("#### Aggregate Results")
     rows = []
     for label, val in sdr_vals.items():
-        disp = f"{val:+.2f} dB" if val is not None else "—"
+        file_cnt = {"D0 Raw": total_d0, "D1 Segments": total_d1,
+                    "D2 Clean": total_d2, "D3 Structured": total_d3}.get(label, 0)
+        disp = f"{val:+.2f} dB" if val is not None else "— (no data)"
         note = (
-            "Noisy raw input" if "D0" in label else
-            "VAD chunked"    if "D1" in label else
-            "Cleaned & normalised" if "D2" in label else
+            "Noisy raw input"         if "D0" in label else
+            "VAD chunked"             if "D1" in label else
+            "Cleaned & normalised"    if "D2" in label else
             "Structured pairs (best)"
         )
-        rows.append({"Stage": label, "Mean SDR": disp, "Description": note})
-
+        rows.append({"Stage": label, "Files": file_cnt, "Mean SDR": disp, "Description": note})
     import pandas as pd
     df = pd.DataFrame(rows)
     st.dataframe(df, use_container_width=True, hide_index=True)
+
+    # Per-file SDR breakdown for D3 pairs
+    if total_d3 > 0:
+        st.markdown("#### Per-File SDR Breakdown (D3 Structured Pairs)")
+        with st.spinner("Computing per-file SDR…"):
+            from utils.audio import load_audio as _la
+            from utils.metrics import mean_sdr as _ms
+            mixes = wav_files(config.D3_MIX_DIR)
+            s1s   = wav_files(config.D3_S1_DIR)
+            s2s   = wav_files(config.D3_S2_DIR)
+            k = min(len(mixes), len(s1s), len(s2s), 20)
+            per_rows = []
+            for i in range(k):
+                try:
+                    mix_a, sr2 = _la(str(mixes[i]))
+                    s1r, _     = _la(str(s1s[i]))
+                    s2r, _     = _la(str(s2s[i]))
+                    s1e, s2e   = separate_audio(mix_a, sr2)
+                    t = min(len(s1r), len(s1e))
+                    sv = _ms(np.stack([s1r[:t], s2r[:t]]), np.stack([s1e[:t], s2e[:t]]))
+                    per_rows.append({
+                        "File": mixes[i].name,
+                        "Duration (s)": round(len(mix_a)/sr2, 2),
+                        "SDR (dB)": round(sv, 3),
+                        "Quality": "✅ Good" if sv > 5 else ("⚠️ OK" if sv > 0 else "❌ Poor"),
+                    })
+                except Exception:
+                    per_rows.append({"File": mixes[i].name, "Duration (s)": "?", "SDR (dB)": "error", "Quality": "❌"})
+        df2 = pd.DataFrame(per_rows)
+        st.dataframe(df2, use_container_width=True, hide_index=True)
+        if per_rows:
+            good = sum(1 for r in per_rows if isinstance(r["SDR (dB)"], float) and r["SDR (dB)"] > 0)
+            st.caption(f"{good}/{len(per_rows)} files have SDR > 0 dB")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -498,113 +697,144 @@ elif page == "📊 Evaluation":
 # ─────────────────────────────────────────────────────────────────────────────
 elif page == "🎧 Audio Demo":
     st.markdown('<div class="hero-title">Audio Demo</div>', unsafe_allow_html=True)
-    st.markdown('<div class="hero-sub">Listen to separated speech at each pipeline stage</div>',
+    st.markdown('<div class="hero-sub">Upload your own audio or listen to pipeline stage comparisons</div>',
                 unsafe_allow_html=True)
 
-    from utils.audio import load_audio, make_mixture
-
-    d3_mixes = wav_files(config.D3_MIX_DIR)
-    d3_s1s   = wav_files(config.D3_S1_DIR)
-    d3_s2s   = wav_files(config.D3_S2_DIR)
-
-    n_avail = min(len(d3_mixes), len(d3_s1s), len(d3_s2s))
-
-    if n_avail == 0:
-        st.warning("No D3 pairs found. Run the pipeline first (Run Pipeline page).")
-        st.stop()
-
-    sample_idx = st.slider("Sample index", 0, n_avail - 1, 0)
-    mix_path = d3_mixes[sample_idx]
-    s1_path  = d3_s1s[sample_idx]
-    s2_path  = d3_s2s[sample_idx]
-
-    st.markdown(f"**File:** `{mix_path.name}`")
-    st.markdown('<hr class="soft">', unsafe_allow_html=True)
-
-    # ── Mixed input ──────────────────────────────────────────────────────────
-    st.markdown("### 🔀 Input — Mixed Audio")
-    st.markdown('<div class="card card-accent">', unsafe_allow_html=True)
-    st.audio(audio_bytes(str(mix_path)), format="audio/wav")
-    st.markdown("Two speakers mixed together — hard to understand either one.")
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    st.markdown('<hr class="soft">', unsafe_allow_html=True)
-
-    # ── Reference sources ────────────────────────────────────────────────────
-    st.markdown("### 🎯 Ground-Truth Sources")
-    c1, c2 = st.columns(2)
-    with c1:
-        st.markdown("**Speaker 1 (reference)**")
-        st.audio(audio_bytes(str(s1_path)), format="audio/wav")
-    with c2:
-        st.markdown("**Speaker 2 (reference)**")
-        st.audio(audio_bytes(str(s2_path)), format="audio/wav")
-
-    st.markdown('<hr class="soft">', unsafe_allow_html=True)
-
-    # ── Model separation per stage ───────────────────────────────────────────
-    st.markdown("### 🤖 Model Separation at Each Stage")
-
-    stage_info = [
-        ("D0 — Raw", config.D0_DIR, "#ff7b72"),
-        ("D1 — Segmented", config.D1_DIR, "#e3b341"),
-        ("D2 — Cleaned", config.D2_DIR, "#58a6ff"),
-        ("D3 — Structured", None, "#3fb950"),  # None = use d3 mix directly
-    ]
-
-    s1_ref, sr = load_audio(str(s1_path))
-    s2_ref, _  = load_audio(str(s2_path))
-
-    from utils.metrics import mean_sdr as compute_mean_sdr
     import io as _io
+    from utils.audio import load_audio, make_mixture
+    from utils.metrics import mean_sdr as _msdr
 
     def _arr_to_bytes(arr, sample_rate):
         buf = _io.BytesIO()
         sf.write(buf, arr.astype("float32"), sample_rate, format="WAV", subtype="PCM_16")
         return buf.getvalue()
 
-    for stage_label, stage_dir, color in stage_info:
-        with st.expander(f"🔊 {stage_label}", expanded=(stage_label == "D3 — Structured")):
-            try:
-                with st.spinner("Running model…"):
-                    if stage_dir is None:
-                        # D3: use the actual structured mix
-                        mix_audio, sr2 = load_audio(str(mix_path))
-                    else:
-                        # Build synthetic mix from stage files
-                        stage_wavs = wav_files(stage_dir)
-                        if len(stage_wavs) < 2:
-                            st.warning(f"Not enough files in {stage_dir}")
-                            continue
-                        random.seed(sample_idx)
-                        random.shuffle(stage_wavs)
-                        a1, sr2 = load_audio(str(stage_wavs[0]))
-                        a2, _   = load_audio(str(stage_wavs[1]))
-                        mix_audio, s1_syn, s2_syn = make_mixture(a1, a2)
+    # ── SECTION 1: Upload your own audio ────────────────────────────────────
+    st.markdown("### 📤 Upload Your Own Audio")
+    st.markdown('<div class="card card-accent">', unsafe_allow_html=True)
+    uploaded = st.file_uploader(
+        "Upload a mixed audio file (WAV, MP3, FLAC, OGG, MP4, M4A)",
+        type=["wav", "mp3", "flac", "ogg", "mp4", "m4a"],
+        key="demo_upload",
+    )
 
-                    s1_est, s2_est = separate_audio(mix_audio, sr2)
+    if uploaded is not None:
+        # Save to temp path
+        import tempfile, pathlib
+        suffix = pathlib.Path(uploaded.name).suffix or ".wav"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            tmp.write(uploaded.read())
+            tmp_path = tmp.name
 
-                # SDR
-                t = min(len(s1_ref), len(s1_est))
-                from utils.metrics import mean_sdr as _msdr
-                import numpy as np
-                sdr_val = _msdr(
-                    np.stack([s1_ref[:t], s2_ref[:t]]),
-                    np.stack([s1_est[:t], s2_est[:t]])
-                )
-                st.markdown(
-                    f'<span style="color:{color}; font-weight:700; font-size:1.1rem;">'
-                    f'SDR: {sdr_val:+.2f} dB</span>',
-                    unsafe_allow_html=True,
-                )
+        st.markdown(f"**Uploaded:** `{uploaded.name}` ({uploaded.size/1024:.1f} KB)")
+        st.audio(tmp_path, format="audio/wav")
 
-                ca, cb = st.columns(2)
-                with ca:
-                    st.markdown("**Separated — Speaker 1**")
-                    st.audio(_arr_to_bytes(s1_est, sr2), format="audio/wav")
-                with cb:
-                    st.markdown("**Separated — Speaker 2**")
-                    st.audio(_arr_to_bytes(s2_est, sr2), format="audio/wav")
+        if st.button("🤖 Separate Speakers", key="sep_upload", type="primary"):
+            with st.spinner("Loading model & running separation…"):
+                try:
+                    load_model()
+                    mix_audio, sr_up = load_audio(tmp_path)
+                    s1_est, s2_est = separate_audio(mix_audio, sr_up)
+                    st.success("✅ Separation complete!")
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.markdown("**🔊 Separated — Speaker 1**")
+                        st.audio(_arr_to_bytes(s1_est, sr_up), format="audio/wav")
+                    with col2:
+                        st.markdown("**🔊 Separated — Speaker 2**")
+                        st.audio(_arr_to_bytes(s2_est, sr_up), format="audio/wav")
 
-            except Exception as e:
-                st.error(f"Separation failed: {e}")
+                    # Quick SDR info
+                    rms1 = float(np.sqrt(np.mean(s1_est**2)))
+                    rms2 = float(np.sqrt(np.mean(s2_est**2)))
+                    st.info(f"Speaker 1 RMS: {rms1:.4f} | Speaker 2 RMS: {rms2:.4f} (no ground truth for uploaded files)")
+                except Exception as e:
+                    st.error(f"Separation failed: {e}")
+    else:
+        st.caption("No file uploaded yet — drag and drop or click Browse.")
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown('<hr class="soft">', unsafe_allow_html=True)
+
+    # ── SECTION 2: Pipeline stage comparison ────────────────────────────────
+    st.markdown("### 📊 Pipeline Stage Comparison (D0 → D3)")
+
+    d3_mixes = wav_files(config.D3_MIX_DIR)
+    d3_s1s   = wav_files(config.D3_S1_DIR)
+    d3_s2s   = wav_files(config.D3_S2_DIR)
+    n_avail  = min(len(d3_mixes), len(d3_s1s), len(d3_s2s))
+
+    if n_avail == 0:
+        st.info("No D3 pairs found. Run the pipeline first to enable stage comparison.")
+    else:
+        sample_idx = st.slider("Sample index", 0, n_avail - 1, 0)
+        mix_path   = d3_mixes[sample_idx]
+        s1_path    = d3_s1s[sample_idx]
+        s2_path    = d3_s2s[sample_idx]
+
+        st.markdown(f"**File:** `{mix_path.name}`")
+        st.markdown('<hr class="soft">', unsafe_allow_html=True)
+
+        st.markdown("#### 🔀 Input — Mixed Audio")
+        st.markdown('<div class="card card-accent">', unsafe_allow_html=True)
+        st.audio(audio_bytes(str(mix_path)), format="audio/wav")
+        st.markdown("Two speakers mixed together.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+        st.markdown("#### 🎯 Ground-Truth Sources")
+        c1, c2 = st.columns(2)
+        with c1:
+            st.markdown("**Speaker 1 (reference)**")
+            st.audio(audio_bytes(str(s1_path)), format="audio/wav")
+        with c2:
+            st.markdown("**Speaker 2 (reference)**")
+            st.audio(audio_bytes(str(s2_path)), format="audio/wav")
+
+        st.markdown("#### 🤖 Model Separation at Each Stage")
+        s1_ref, sr = load_audio(str(s1_path))
+        s2_ref, _  = load_audio(str(s2_path))
+
+        stage_info = [
+            ("D0 — Raw",        config.D0_DIR,  "#ff7b72"),
+            ("D1 — Segmented",  config.D1_DIR,  "#e3b341"),
+            ("D2 — Cleaned",    config.D2_DIR,  "#58a6ff"),
+            ("D3 — Structured", None,            "#3fb950"),
+        ]
+
+        for stage_label, stage_dir, color in stage_info:
+            with st.expander(f"🔊 {stage_label}", expanded=(stage_label == "D3 — Structured")):
+                try:
+                    with st.spinner("Running model…"):
+                        if stage_dir is None:
+                            mix_audio, sr2 = load_audio(str(mix_path))
+                        else:
+                            stage_wavs = wav_files(stage_dir)
+                            if len(stage_wavs) < 2:
+                                st.warning(f"Not enough files in {stage_dir}")
+                                continue
+                            random.seed(sample_idx)
+                            random.shuffle(stage_wavs)
+                            a1, sr2 = load_audio(str(stage_wavs[0]))
+                            a2, _   = load_audio(str(stage_wavs[1]))
+                            mix_audio, _, _ = make_mixture(a1, a2)
+                        s1_est, s2_est = separate_audio(mix_audio, sr2)
+
+                    t = min(len(s1_ref), len(s1_est))
+                    sdr_val = _msdr(
+                        np.stack([s1_ref[:t], s2_ref[:t]]),
+                        np.stack([s1_est[:t], s2_est[:t]])
+                    )
+                    st.markdown(
+                        f'<span style="color:{color}; font-weight:700; font-size:1.1rem;">'
+                        f'SDR: {sdr_val:+.2f} dB</span>',
+                        unsafe_allow_html=True,
+                    )
+                    ca, cb = st.columns(2)
+                    with ca:
+                        st.markdown("**Separated — Speaker 1**")
+                        st.audio(_arr_to_bytes(s1_est, sr2), format="audio/wav")
+                    with cb:
+                        st.markdown("**Separated — Speaker 2**")
+                        st.audio(_arr_to_bytes(s2_est, sr2), format="audio/wav")
+                except Exception as e:
+                    st.error(f"Separation failed: {e}")
