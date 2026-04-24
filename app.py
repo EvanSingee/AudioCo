@@ -8,6 +8,7 @@ import logging
 import os
 import random
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -155,17 +156,17 @@ def separate_audio(audio: np.ndarray, sr: int):
     return separate(audio, sr)
 
 
-def compute_sdr_for_dir(audio_dir: str, n: int = 3):
+def compute_sdr_for_dir(audio_dir: str, n: int = 50, seed: int = None):
     """Return mean SDR for synthetic pairs built from files in *audio_dir*."""
     from utils.audio import load_audio, make_mixture
     from utils.metrics import mean_sdr
 
     wavs = wav_files(audio_dir)
     if len(wavs) < 2:
-        return None
-    random.seed(0)
-    shuffled = list(wavs)
-    random.shuffle(shuffled)
+        return None, []
+    rng = random.Random(seed) if seed is not None else random.Random()
+    shuffled = wavs[:]
+    rng.shuffle(shuffled)
     pairs = list(zip(shuffled[::2], shuffled[1::2]))[:n]
 
     sdrs = []
@@ -182,27 +183,31 @@ def compute_sdr_for_dir(audio_dir: str, n: int = 3):
             ))
         except Exception:
             pass
-    return float(np.mean(sdrs)) if sdrs else None
+    return float(np.mean(sdrs)) if sdrs else None, sdrs
 
 
-def compute_sdr_d3(n: int = 3):
-    """Return mean SDR on structured D3 pairs."""
+def compute_sdr_d3(n: int = 50, seed: int = None):
+    """Return mean SDR and per-file SDRs on structured D3 pairs."""
     from utils.audio import load_audio
     from utils.metrics import mean_sdr
 
     mixes = wav_files(config.D3_MIX_DIR)
     s1s   = wav_files(config.D3_S1_DIR)
     s2s   = wav_files(config.D3_S2_DIR)
-    k = min(len(mixes), len(s1s), len(s2s), n)
-    if k == 0:
-        return None
+    if seed is not None:
+        rng = random.Random(seed)
+        idxs = list(range(min(len(mixes), len(s1s), len(s2s))))
+        rng.shuffle(idxs)
+        idxs = idxs[:n]
+    else:
+        idxs = range(min(len(mixes), len(s1s), len(s2s), n))
 
     sdrs = []
-    for mf, s1f, s2f in zip(mixes[:k], s1s[:k], s2s[:k]):
+    for i in idxs:
         try:
-            mix, sr = load_audio(str(mf))
-            s1r, _  = load_audio(str(s1f))
-            s2r, _  = load_audio(str(s2f))
+            mix, sr = load_audio(str(mixes[i]))
+            s1r, _  = load_audio(str(s1s[i]))
+            s2r, _  = load_audio(str(s2s[i]))
             s1e, s2e = separate_audio(mix, sr)
             t = min(len(s1r), len(s1e))
             sdrs.append(mean_sdr(
@@ -211,7 +216,7 @@ def compute_sdr_d3(n: int = 3):
             ))
         except Exception:
             pass
-    return float(np.mean(sdrs)) if sdrs else None
+    return float(np.mean(sdrs)) if sdrs else None, sdrs
 
 
 def sdr_color(v):
@@ -557,66 +562,65 @@ elif page == "📊 Evaluation":
         st.warning("⚠️ No processed data found. Please run the pipeline first (⚙️ Run Pipeline page).")
         st.stop()
 
-    # Auto-compute if data exists but no cached values
-    if "sdr_vals" not in st.session_state:
+    dynamic_mode = st.toggle("🔄 Dynamic Mode", value=False, help="Compute SDR on all available data (no caching)")
+
+    def _get_seed():
+        return int(time.time() * 1000) % 100000 if dynamic_mode else 42
+
+    if dynamic_mode:
+        st.caption("Dynamic mode: using all files, results change every run.")
+        st.session_state.pop("sdr_vals", None)
+        st.session_state.pop("sdr_per_file", None)
+
+    if "sdr_vals" not in st.session_state or dynamic_mode:
         data_ready = total_d2 >= 2 or total_d3 >= 1
-        if data_ready:
-            st.info("Data found — computing SDR scores from your dataset…")
-            with st.spinner("Loading model & computing SDR on your actual files…"):
-                load_model()
-                st.session_state["sdr_vals"] = {
-                    "D0 Raw":        compute_sdr_for_dir(config.D0_DIR) if total_d0 >= 2 else None,
-                    "D1 Segments":   compute_sdr_for_dir(config.D1_DIR) if total_d1 >= 2 else None,
-                    "D2 Clean":      compute_sdr_for_dir(config.D2_DIR) if total_d2 >= 2 else None,
-                    "D3 Structured": compute_sdr_d3()                   if total_d3 >= 1 else None,
-                }
-            st.success("✅ SDR computed from your actual dataset!")
-        else:
+        seed = _get_seed()
+
+        if not data_ready:
             if st.button("▶ Compute SDR now", type="primary"):
                 with st.spinner("Loading model & computing SDR…"):
                     load_model()
-                    st.session_state["sdr_vals"] = {
-                        "D0 Raw":        compute_sdr_for_dir(config.D0_DIR),
-                        "D1 Segments":   compute_sdr_for_dir(config.D1_DIR),
-                        "D2 Clean":      compute_sdr_for_dir(config.D2_DIR),
-                        "D3 Structured": compute_sdr_d3(),
-                    }
+                    d0_mean, _ = compute_sdr_for_dir(config.D0_DIR, seed=seed)
+                    d1_mean, _ = compute_sdr_for_dir(config.D1_DIR, seed=seed)
+                    d2_mean, d2_list = compute_sdr_for_dir(config.D2_DIR, seed=seed)
+                    d3_mean, d3_list = compute_sdr_d3(seed=seed)
+                    st.session_state["sdr_vals"] = {"D0 Raw": d0_mean, "D1 Segments": d1_mean, "D2 Clean": d2_mean, "D3 Structured": d3_mean}
+                    st.session_state["sdr_per_file"] = {"D0 Raw": [], "D1 Segments": [], "D2 Clean": d2_list, "D3 Structured": d3_list}
+                    st.rerun()
             else:
                 st.stop()
+        else:
+            with st.spinner("Loading model & computing SDR on your actual files…"):
+                load_model()
+                d0_mean, d0_list = compute_sdr_for_dir(config.D0_DIR, seed=seed)
+                d1_mean, d1_list = compute_sdr_for_dir(config.D1_DIR, seed=seed)
+                d2_mean, d2_list = compute_sdr_for_dir(config.D2_DIR, seed=seed)
+                d3_mean, d3_list = compute_sdr_d3(seed=seed)
+                st.session_state["sdr_vals"] = {"D0 Raw": d0_mean, "D1 Segments": d1_mean, "D2 Clean": d2_mean, "D3 Structured": d3_mean}
+                st.session_state["sdr_per_file"] = {"D0 Raw": d0_list, "D1 Segments": d1_list, "D2 Clean": d2_list, "D3 Structured": d3_list}
+            st.success("✅ SDR computed from your actual dataset!")
 
     sdr_vals = st.session_state["sdr_vals"]
+    sdr_per_file = st.session_state.get("sdr_per_file", {})
 
     st.markdown("### 📈 SDR Results (from your data)")
-    # Recompute button
-    if st.button("🔄 Recompute SDR", help="Re-run evaluation on current dataset"):
-        with st.spinner("Recomputing…"):
-            load_model()
-            st.session_state["sdr_vals"] = {
-                "D0 Raw":        compute_sdr_for_dir(config.D0_DIR) if total_d0 >= 2 else None,
-                "D1 Segments":   compute_sdr_for_dir(config.D1_DIR) if total_d1 >= 2 else None,
-                "D2 Clean":      compute_sdr_for_dir(config.D2_DIR) if total_d2 >= 2 else None,
-                "D3 Structured": compute_sdr_d3()                   if total_d3 >= 1 else None,
-            }
-        sdr_vals = st.session_state["sdr_vals"]
-        st.rerun()
 
-    # Metric tiles
     tile_cols = st.columns(4)
     for col, (label, val) in zip(tile_cols, sdr_vals.items()):
         color = sdr_color(val)
         disp  = f"{val:+.1f}" if val is not None else "N/A"
+        count = len(sdr_per_file.get(label, []))
         with col:
             st.markdown(f"""
             <div class="metric-tile">
                 <div class="metric-label">{label}</div>
                 <div class="metric-value" style="color:{color}">{disp}</div>
-                <div class="metric-unit">dB SDR</div>
+                <div class="metric-unit">dB SDR <small>({count} pairs)</small></div>
             </div>
             """, unsafe_allow_html=True)
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Bar chart
     labels = list(sdr_vals.keys())
     values = [v if v is not None else 0 for v in sdr_vals.values()]
     colors = [sdr_color(v) for v in sdr_vals.values()]
@@ -646,6 +650,8 @@ elif page == "📊 Evaluation":
     for label, val in sdr_vals.items():
         file_cnt = {"D0 Raw": total_d0, "D1 Segments": total_d1,
                     "D2 Clean": total_d2, "D3 Structured": total_d3}.get(label, 0)
+        per_list = sdr_per_file.get(label, [])
+        std_disp = f"± {np.std(per_list):.2f}" if len(per_list) > 1 else "N/A"
         disp = f"{val:+.2f} dB" if val is not None else "— (no data)"
         note = (
             "Noisy raw input"         if "D0" in label else
@@ -653,43 +659,48 @@ elif page == "📊 Evaluation":
             "Cleaned & normalised"    if "D2" in label else
             "Structured pairs (best)"
         )
-        rows.append({"Stage": label, "Files": file_cnt, "Mean SDR": disp, "Description": note})
+        rows.append({"Stage": label, "Files": file_cnt, "Pairs": len(per_list), "Mean SDR": disp, "Std Dev": std_disp, "Description": note})
     import pandas as pd
     df = pd.DataFrame(rows)
     st.dataframe(df, use_container_width=True, hide_index=True)
 
-    # Per-file SDR breakdown for D3 pairs
-    if total_d3 > 0:
-        st.markdown("#### Per-File SDR Breakdown (D3 Structured Pairs)")
-        with st.spinner("Computing per-file SDR…"):
-            from utils.audio import load_audio as _la
-            from utils.metrics import mean_sdr as _ms
-            mixes = wav_files(config.D3_MIX_DIR)
-            s1s   = wav_files(config.D3_S1_DIR)
-            s2s   = wav_files(config.D3_S2_DIR)
-            k = min(len(mixes), len(s1s), len(s2s), 20)
-            per_rows = []
-            for i in range(k):
-                try:
-                    mix_a, sr2 = _la(str(mixes[i]))
-                    s1r, _     = _la(str(s1s[i]))
-                    s2r, _     = _la(str(s2s[i]))
-                    s1e, s2e   = separate_audio(mix_a, sr2)
-                    t = min(len(s1r), len(s1e))
-                    sv = _ms(np.stack([s1r[:t], s2r[:t]]), np.stack([s1e[:t], s2e[:t]]))
-                    per_rows.append({
-                        "File": mixes[i].name,
-                        "Duration (s)": round(len(mix_a)/sr2, 2),
-                        "SDR (dB)": round(sv, 3),
-                        "Quality": "✅ Good" if sv > 5 else ("⚠️ OK" if sv > 0 else "❌ Poor"),
-                    })
-                except Exception:
-                    per_rows.append({"File": mixes[i].name, "Duration (s)": "?", "SDR (dB)": "error", "Quality": "❌"})
-        df2 = pd.DataFrame(per_rows)
-        st.dataframe(df2, use_container_width=True, hide_index=True)
-        if per_rows:
-            good = sum(1 for r in per_rows if isinstance(r["SDR (dB)"], float) and r["SDR (dB)"] > 0)
-            st.caption(f"{good}/{len(per_rows)} files have SDR > 0 dB")
+    # Per-file SDR breakdown — shown for D2 and D3 stages
+    for stage_key, stage_dir, stage_label in [
+        ("D2 Clean", config.D2_DIR, "D2 Clean"),
+        ("D3 Structured", config.D3_MIX_DIR, "D3 Structured Pairs"),
+    ]:
+        per_list = sdr_per_file.get(stage_key, [])
+        if not per_list:
+            continue
+        st.markdown(f"#### 📊 Per-File SDR Breakdown — {stage_label}")
+        max_files = min(len(per_list), 100)
+        per_rows = [{"#": i+1, "SDR (dB)": round(v, 3),
+                     "Quality": "✅ Good" if v > 5 else ("⚠️ OK" if v > 0 else "❌ Poor")}
+                    for i, v in enumerate(per_list[:max_files])]
+        df3 = pd.DataFrame(per_rows)
+        st.dataframe(df3, use_container_width=True, hide_index=True)
+        st.caption(f"{len(per_list)} pairs evaluated — showing {max_files}")
+
+        # Live histogram
+        hist_fig = go.Figure(go.Histogram(
+            x=per_list, nbins=20,
+            marker_color="#58a6ff", opacity=0.8,
+            hovertemplate="SDR: %{x:.2f} dB<br>Count: %{y}<extra></extra>"
+        ))
+        hist_fig.update_layout(
+            plot_bgcolor="#161b22",
+            paper_bgcolor="#0d1117",
+            font=dict(color="#e6edf3"),
+            title=dict(text=f"SDR Distribution — {stage_label}", font=dict(size=14)),
+            xaxis=dict(title="SDR (dB)", gridcolor="#21262d"),
+            yaxis=dict(title="Count", gridcolor="#21262d"),
+            height=260,
+            margin=dict(t=40, b=30),
+        )
+        st.plotly_chart(hist_fig, use_container_width=True)
+
+        good = sum(1 for v in per_list if v > 0)
+        st.metric("Files with positive SDR", f"{good}/{len(per_list)} ({100*good/len(per_list):.1f}%)")
 
 
 # ─────────────────────────────────────────────────────────────────────────────
